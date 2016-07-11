@@ -13,6 +13,7 @@ namespace BonContact.Web.Entities
         public string State { get; set; }
         public string ZipCode { get; set; }
         public string Country { get; set; }
+        public AddressType AddressType { get; set; }
 
         public int ContactID { get; set; }
         public virtual Contact Contact { get; set; }

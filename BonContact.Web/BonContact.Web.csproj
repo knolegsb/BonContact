@@ -170,7 +170,10 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="DAL\BonContactContext.cs" />
+    <Compile Include="DAL\BonContactDbInitializer.cs" />
     <Compile Include="Entities\Address.cs" />
+    <Compile Include="Entities\AddressType.cs" />
     <Compile Include="Entities\Contact.cs" />
     <Compile Include="Entities\File.cs" />
     <Compile Include="Entities\FilePath.cs" />
