@@ -9,7 +9,11 @@ namespace BonContact.Web.DAL
 {
     public class BonContactContext : DbContext
     {
-
+        public BonContactContext() : base("BonContactContext")
+        {            
+           
+        }
+        
         public DbSet<Person> People { get; set; }
         public DbSet<File> Files { get; set; }
         public DbSet<FilePath> FilePaths { get; set; }
