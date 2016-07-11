@@ -10,6 +10,24 @@
     <h4>Contact</h4>
     <hr />
     <dl class="dl-horizontal">
+        @if (Model.Files.Any(f => f.FileType == BonContact.Web.Entities.FileType.Photo))
+        {
+            <dt>
+                Image
+            </dt>
+            <dd>
+                <img src="~/File?id=@Model.Files.First(f => f.FileType == BonContact.Web.Entities.FileType.Photo).FileID" alt="image" height="297" width="297"/>
+            </dd>
+        }
+        else
+        {
+            <dt>
+                Image
+            </dt>
+            <dd>
+                <img src="~/Images/no-thumb.jpg" alt="image" />
+            </dd>
+        }
         <dt>
             @Html.DisplayNameFor(model => model.LastName)
         </dt>

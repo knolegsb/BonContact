@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using BonContact.Web.DAL;
 using BonContact.Web.Entities;
+using System.Data.Entity.Infrastructure;
 
 namespace BonContact.Web.Controllers
 {
@@ -47,15 +48,44 @@ namespace BonContact.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ID,LastName,FirstName,DateAdded,Interests")] Contact contact)
+        public ActionResult Create([Bind(Include = "ID,LastName,FirstName,DateAdded,Interests")] Contact contact, HttpPostedFileBase upload)
         {
-            if (ModelState.IsValid)
-            {
-                db.People.Add(contact);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
+            
+            //if (ModelState.IsValid)
+            //{
+            //    db.People.Add(contact);
+            //    db.SaveChanges();
+            //    return RedirectToAction("Index");
+            //}
 
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    if (upload != null && upload.ContentLength > 0)
+                    {
+                        var newImage = new File
+                        {
+                            FileName = System.IO.Path.GetFileName(upload.FileName),
+                            FileType = FileType.Photo,
+                            ContentType = upload.ContentType
+                        };
+                        using(var reader = new System.IO.BinaryReader(upload.InputStream))
+                        {
+                            newImage.Content = reader.ReadBytes(upload.ContentLength);
+                        }
+                        contact.Files = new List<File> { newImage };
+                    }
+
+                    db.Contacts.Add(contact);
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+            }
+            catch (RetryLimitExceededException)
+            {
+                ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+            }
             return View(contact);
         }
 
@@ -66,7 +96,8 @@ namespace BonContact.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Contact contact = db.Contacts.Find(id);
+            //Contact contact = db.Contacts.Find(id);
+            Contact contact = db.Contacts.Include(s => s.Files).SingleOrDefault(s => s.ID == id);
             if (contact == null)
             {
                 return HttpNotFound();
@@ -79,23 +110,67 @@ namespace BonContact.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,LastName,FirstName,DateAdded,Interests")] Contact contact)
+        //public ActionResult Edit([Bind(Include = "ID,LastName,FirstName,DateAdded,Interests")] Contact contact)
+        public ActionResult Edit(int? id, HttpPostedFileBase upload)
         {
-            if (ModelState.IsValid)
+            //if (ModelState.IsValid)
+            //{
+            //    db.Entry(contact).State = EntityState.Modified;
+            //    db.SaveChanges();
+            //    return RedirectToAction("Index");
+            //}
+            //return View(contact);
+
+            if (id == null)
             {
-                db.Entry(contact).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            return View(contact);
+            var contactToUpdate = db.Contacts.Find(id);
+            if(TryUpdateModel(contactToUpdate, "", new string[] { "LastName", "FirstName", "DateAdded" }))
+            {
+                try
+                {
+                    if (upload != null && upload.ContentLength > 0)
+                    {
+                        if (contactToUpdate.Files.Any(f => f.FileType == FileType.Photo))
+                        {
+                            db.Files.Remove(contactToUpdate.Files.First(f => f.FileType == FileType.Photo));
+                        }
+                        var newImage = new File
+                        {
+                            FileName = System.IO.Path.GetFileName(upload.FileName),
+                            FileType = FileType.Photo,
+                            ContentType = upload.ContentType
+                        };
+                        using (var reader = new System.IO.BinaryReader(upload.InputStream))
+                        {
+                            newImage.Content = reader.ReadBytes(upload.ContentLength);
+                        }
+                        contactToUpdate.Files = new List<File> { newImage };
+                    }
+                    db.Entry(contactToUpdate).State = EntityState.Modified;
+                    db.SaveChanges();
+
+                    return RedirectToAction("Index");
+                }
+                catch (RetryLimitExceededException)
+                {
+                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists, see your system administrator.");
+                }
+            }
+            return View(contactToUpdate);
         }
 
         // GET: Contact/Delete/5
-        public ActionResult Delete(int? id)
+        public ActionResult Delete(int? id, bool? saveChangesError = false)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            if (saveChangesError.GetValueOrDefault())
+            {
+                ViewBag.ErrorMessage = "Delete failed. Try again, and if the problem persists see your system administrator.";
             }
             Contact contact = db.Contacts.Find(id);
             if (contact == null)
@@ -110,9 +185,17 @@ namespace BonContact.Web.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Contact contact = db.Contacts.Find(id);
-            db.People.Remove(contact);
-            db.SaveChanges();
+            try
+            {
+                Contact contact = db.Contacts.Find(id);
+                db.People.Remove(contact);
+                db.SaveChanges();
+            }
+            catch (RetryLimitExceededException)
+            {
+                return RedirectToAction("Delete", new { id = id, saveChangesError = true });
+            }
+
             return RedirectToAction("Index");
         }
 
