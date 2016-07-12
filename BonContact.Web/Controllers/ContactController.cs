@@ -11,13 +11,20 @@ using BonContact.Web.Entities;
 using System.Data.Entity.Infrastructure;
 using BonContact.Web.Models;
 using PagedList;
+using BonContact.Web.Abstract;
 
 namespace BonContact.Web.Controllers
 {
     public class ContactController : Controller
     {
-        private BonContactContext db = new BonContactContext();
+        //private BonContactContext db = new BonContactContext();
 
+        private IContactRepository _repo;
+
+        public ContactController(IContactRepository repo)
+        {
+            this._repo = repo;
+        }
         // GET: Contact
         //public ActionResult Index()
         //{
@@ -41,18 +48,10 @@ namespace BonContact.Web.Controllers
 
             ViewBag.CurrentFilter = searchString;
 
-            var contacts = db.Contacts.Select(c => c)
+            var contacts = _repo.GetAllContacts().Select(c => c)
                                         .Where(c => string.IsNullOrEmpty(searchString) 
                                                     || c.FirstName.Contains(searchString) 
                                                     || c.LastName.Contains(searchString));
-
-            //if (!String.IsNullOrEmpty(searchString))
-            //{
-            //    var result = contacts.Where(c => c.LastName.Contains(searchString) 
-            //                                || c.FirstName.Contains(searchString));  
-            //}
-
-
 
             switch (sortOrder)
             {
@@ -82,7 +81,7 @@ namespace BonContact.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Contact contact = db.Contacts.Find(id);
+            var contact = _repo.GetContact(id);
             if (contact == null)
             {
                 return HttpNotFound();
@@ -138,8 +137,9 @@ namespace BonContact.Web.Controllers
                         contact.Address = new List<Address> { newAddress };
                     }
 
-                    db.Contacts.Add(contact);
-                    db.SaveChanges();
+                    _repo.AddContact(contact);
+                        //db.Contacts.Add(contact);
+                    _repo.DbSaveChanges();
                     return RedirectToAction("Index");
                 }
             }
@@ -158,7 +158,7 @@ namespace BonContact.Web.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             //Contact contact = db.Contacts.Find(id);
-            Contact contact = db.Contacts.Include(s => s.Files).SingleOrDefault(s => s.ID == id);
+            Contact contact = _repo.GetContactWithFiles(id);
             if (contact == null)
             {
                 return HttpNotFound();
@@ -177,31 +177,12 @@ namespace BonContact.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var contactToUpdate = db.Contacts.Find(id);
-            if(TryUpdateModel(contactToUpdate, "", new string[] { "LastName", "FirstName", "DateAdded" }))
+            var contactToUpdate = _repo.GetContact(id);
+            if (TryUpdateModel(contactToUpdate, "", new string[] { "LastName", "FirstName", "DateAdded" }))
             {
                 try
                 {
-                    if (upload != null && upload.ContentLength > 0)
-                    {
-                        if (contactToUpdate.Files.Any(f => f.FileType == FileType.Photo))
-                        {
-                            db.Files.Remove(contactToUpdate.Files.First(f => f.FileType == FileType.Photo));
-                        }
-                        var newImage = new File
-                        {
-                            FileName = System.IO.Path.GetFileName(upload.FileName),
-                            FileType = FileType.Photo,
-                            ContentType = upload.ContentType
-                        };
-                        using (var reader = new System.IO.BinaryReader(upload.InputStream))
-                        {
-                            newImage.Content = reader.ReadBytes(upload.ContentLength);
-                        }
-                        contactToUpdate.Files = new List<File> { newImage };
-                    }
-                    db.Entry(contactToUpdate).State = EntityState.Modified;
-                    db.SaveChanges();
+                    _repo.ImageUpdate(id, upload);
 
                     return RedirectToAction("Index");
                 }
@@ -224,7 +205,7 @@ namespace BonContact.Web.Controllers
             {
                 ViewBag.ErrorMessage = "Delete failed. Try again, and if the problem persists see your system administrator.";
             }
-            Contact contact = db.Contacts.Find(id);
+            Contact contact = _repo.GetContact(id);
             if (contact == null)
             {
                 return HttpNotFound();
@@ -239,9 +220,7 @@ namespace BonContact.Web.Controllers
         {
             try
             {
-                Contact contact = db.Contacts.Find(id);
-                db.People.Remove(contact);
-                db.SaveChanges();
+                _repo.RemoveContact(id);
             }
             catch (RetryLimitExceededException)
             {
@@ -255,7 +234,7 @@ namespace BonContact.Web.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                _repo.DbDispose();
             }
             base.Dispose(disposing);
         }
