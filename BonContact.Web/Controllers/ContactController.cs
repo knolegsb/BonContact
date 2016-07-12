@@ -16,20 +16,13 @@ using BonContact.Web.Abstract;
 namespace BonContact.Web.Controllers
 {
     public class ContactController : Controller
-    {
-        //private BonContactContext db = new BonContactContext();
-
+    {        
         private IContactRepository _repo;
 
         public ContactController(IContactRepository repo)
         {
             this._repo = repo;
-        }
-        // GET: Contact
-        //public ActionResult Index()
-        //{
-        //    return View(db.Contacts.ToList());
-        //}
+        }        
 
         public ViewResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
@@ -137,8 +130,7 @@ namespace BonContact.Web.Controllers
                         contact.Address = new List<Address> { newAddress };
                     }
 
-                    _repo.AddContact(contact);
-                        //db.Contacts.Add(contact);
+                    _repo.AddContact(contact);                      
                     _repo.DbSaveChanges();
                     return RedirectToAction("Index");
                 }
@@ -157,7 +149,7 @@ namespace BonContact.Web.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            //Contact contact = db.Contacts.Find(id);
+            
             Contact contact = _repo.GetContactWithFiles(id);
             if (contact == null)
             {
