@@ -16,7 +16,7 @@
                 Image
             </dt>
             <dd>
-                <img src="~/File?id=@Model.Files.First(f => f.FileType == BonContact.Web.Entities.FileType.Photo).FileID" alt="image" height="297" width="297"/>
+                <img class="img-thumbnail" src="~/File?id=@Model.Files.First(f => f.FileType == BonContact.Web.Entities.FileType.Photo).FileID" alt="image" height="280" width="280"/>
             </dd>
         }
         else

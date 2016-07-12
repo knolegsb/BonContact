@@ -54,7 +54,7 @@
             <div class="form-group">
                 <span class="control-label col-md-2"><strong>Current Image</strong></span>
                 <div class="col-md-10">
-                    <img src="~/File?id=@Model.Files.First(f => f.FileType == BonContact.Web.Entities.FileType.Photo).FileID" alt="image" height="297" width="297" />
+                    <img class="img-responsive img-thumbnail" src="~/File?id=@Model.Files.First(f => f.FileType == BonContact.Web.Entities.FileType.Photo).FileID" alt="image" height="280" width="280" />
                 </div>
             </div>
         }
@@ -63,7 +63,7 @@
             <div class="form-group">
                 <span class="control-label col-md-2"><strong>Current Image</strong></span>
                 <div class="col-md-10">
-                    <img src="~/Images/no-thumb.jpg" alt="image" />
+                    <img class="img-responsive img-thumbnail" src="~/Images/no-thumb.jpg" alt="image" height="280" width="280"/>
                 </div>
             </div>
         }

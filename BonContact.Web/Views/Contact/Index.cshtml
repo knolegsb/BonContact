@@ -34,7 +34,7 @@
         <td>
             @if (item.Files.Any(f => f.FileType == BonContact.Web.Entities.FileType.Photo))
             {
-                <img src="~/File?id=@item.Files.First(f => f.FileType == BonContact.Web.Entities.FileType.Photo).FileID" alt="image" height="50" width="50" />
+                <img class="img-thumbnail" src="~/File?id=@item.Files.First(f => f.FileType == BonContact.Web.Entities.FileType.Photo).FileID" alt="image" height="50" width="50" />
             }
             else
             {

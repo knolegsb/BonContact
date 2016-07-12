@@ -10,6 +10,7 @@ namespace BonContact.Web.Entities
         public DateTime DateAdded { get; set; }
         public string Interests { get; set; }
 
+        //public int AddressID { get; set; }
         public virtual ICollection<Address> Address { get; set; }
     }
 }

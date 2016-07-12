@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using BonContact.Web.DAL;
 using BonContact.Web.Entities;
 using System.Data.Entity.Infrastructure;
+using BonContact.Web.Models;
 
 namespace BonContact.Web.Controllers
 {
@@ -40,6 +41,8 @@ namespace BonContact.Web.Controllers
         // GET: Contact/Create
         public ActionResult Create()
         {
+            //var contact = new Contact();
+            //contact.Address = new List<Address>();  
             return View();
         }
 
@@ -48,7 +51,7 @@ namespace BonContact.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ID,LastName,FirstName,DateAdded,Interests")] Contact contact, HttpPostedFileBase upload)
+        public ActionResult Create([Bind(Include = "ID,LastName,FirstName,DateAdded,Interests, Address")] Contact contact, HttpPostedFileBase upload, Address address)
         {
             
             //if (ModelState.IsValid)
@@ -75,6 +78,37 @@ namespace BonContact.Web.Controllers
                             newImage.Content = reader.ReadBytes(upload.ContentLength);
                         }
                         contact.Files = new List<File> { newImage };
+                    }
+
+                    //var newAddress = db.Addresses.Find(contact.ID);
+                    //if (address != null)
+                    //{
+                    //    newAddress.Line1 = address.Line1;
+                    //    newAddress.Line2 = address.Line2;
+                    //    newAddress.City = address.City;
+                    //    newAddress.State = address.State;
+                    //    newAddress.ZipCode = address.ZipCode;
+                    //    newAddress.Country = address.Country;
+                    //}
+                    //contact.Address = new Address()
+                    //{
+                    //    Line1 = Address.Line1,
+
+                    //};
+
+                    if (address != null)
+                    {
+                        var newAddress = new Address
+                        {
+                            Line1 = address.Line1,
+                            Line2 = address.Line2,
+                            City = address.City,
+                            State = address.State,
+                            ZipCode = address.ZipCode,
+                            Country = address.Country
+                        };
+                        
+                        contact.Address = new List<Address> { newAddress };
                     }
 
                     db.Contacts.Add(contact);
