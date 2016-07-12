@@ -10,6 +10,7 @@ using BonContact.Web.DAL;
 using BonContact.Web.Entities;
 using System.Data.Entity.Infrastructure;
 using BonContact.Web.Models;
+using PagedList;
 
 namespace BonContact.Web.Controllers
 {
@@ -18,9 +19,60 @@ namespace BonContact.Web.Controllers
         private BonContactContext db = new BonContactContext();
 
         // GET: Contact
-        public ActionResult Index()
+        //public ActionResult Index()
+        //{
+        //    return View(db.Contacts.ToList());
+        //}
+
+        public ViewResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
-            return View(db.Contacts.ToList());
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.NameSortParam = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+            ViewBag.DateSortParam = sortOrder == "Date" ? "date_desc" : "Date";
+
+            if (searchString != null)
+            {
+                page = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewBag.CurrentFilter = searchString;
+
+            var contacts = db.Contacts.Select(c => c)
+                                        .Where(c => string.IsNullOrEmpty(searchString) 
+                                                    || c.FirstName.Contains(searchString) 
+                                                    || c.LastName.Contains(searchString));
+
+            //if (!String.IsNullOrEmpty(searchString))
+            //{
+            //    var result = contacts.Where(c => c.LastName.Contains(searchString) 
+            //                                || c.FirstName.Contains(searchString));  
+            //}
+
+
+
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    contacts = contacts.OrderByDescending(c => c.LastName);
+                    break;
+                case "Date":
+                    contacts = contacts.OrderBy(c => c.DateAdded);
+                    break;
+                case "date_desc":
+                    contacts = contacts.OrderByDescending(c => c.DateAdded);
+                    break;
+                default:
+                    contacts = contacts.OrderBy(c => c.LastName);
+                    break;
+            }
+
+            int pageSize = 10;
+            int pageNumber = (page ?? 1);
+            return View(contacts.ToPagedList(pageNumber, pageSize));
         }
 
         // GET: Contact/Details/5
@@ -35,6 +87,7 @@ namespace BonContact.Web.Controllers
             {
                 return HttpNotFound();
             }
+            
             return View(contact);
         }
 
