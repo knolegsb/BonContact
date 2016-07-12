@@ -2,12 +2,16 @@
 
 @{
     ViewBag.Title = "Create";
+    AjaxOptions ajaxOpts = new AjaxOptions
+    {
+        Url = Url.Action("Create")
+    };
 }
 
 <h2>Create</h2>
 
 
-@using (Html.BeginForm("Create", "Contact", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+@using (Ajax.BeginForm(@*"Create",*@ @*"Contact", null, FormMethod.Post, new { enctype = "multipart/form-data" },*@ ajaxOpts))
 {
     @Html.AntiForgeryToken()
     
