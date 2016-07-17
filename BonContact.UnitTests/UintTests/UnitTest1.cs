@@ -15,7 +15,15 @@ namespace BonContact.UnitTests.UintTests
         [TestMethod]
         public void TestMethod1()
         {
-           
+            Mock<IContactRepository> mock = new Mock<IContactRepository>();
+            mock.Setup(m => m.GetAllContacts()).Returns(new List<Contact>
+            {
+                new Contact() {FirstName = "Sean", LastName = "John", Interests = "Shopping"},
+                new Contact() {FirstName = "Sean", LastName = "John", Interests = "Shopping"},
+                new Contact() {FirstName = "Sean", LastName = "John", Interests = "Shopping"},
+                new Contact() {FirstName = "Sean", LastName = "John", Interests = "Shopping"},
+                new Contact() {FirstName = "Sean", LastName = "John", Interests = "Shopping"},
+            });
         }
     }
 }
