@@ -5,8 +5,10 @@ using Moq;
 using BonContact.Web.Entities;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web.Mvc;
 using BonContact.Web.Controllers;
 using BonContact.Web.Concrete;
+using BonContact.Web.HtmlHelpers;
 using BonContact.Web.Models;
 
 namespace BonContact.UnitTests.UintTests
@@ -88,6 +90,26 @@ namespace BonContact.UnitTests.UintTests
             Assert.AreEqual(result.Contacts.Take(1).First().Address.Count, 1);
             Assert.AreEqual(result.Contacts.Take(1).First().Address.First().City, "Los Angeles4");
             Assert.AreEqual(result.Contacts.Skip(1).First().Address.First().City, "Los Angeles5");
+        }
+
+        [TestMethod]
+        public void Test_For_Page_Links()
+        {
+            // Arrange
+            HtmlHelper htmlHelper = null;
+            PagingInfoViewModel pagingInfo = new PagingInfoViewModel()
+            {
+                CurrentPage = 2,
+                TotalItems = 28,
+                ItemsPerPage = 10
+            };
+            Func<int, string> pageUrl = i => "Page" + i;
+
+            // Act
+            MvcHtmlString result = htmlHelper.PageLinks(pagingInfo, pageUrl);
+
+            // Assert
+            Assert.AreEqual(@"<a class=""btn btn-default"" href=""Page1"">1</a>" + @"<a class=""btn btn-default btn-primary selected"" href=""Page2"">2</a>" + @"<a class=""btn btn-default"" href=""Page3"">3</a>", result.ToString());
         }
     }
 }
