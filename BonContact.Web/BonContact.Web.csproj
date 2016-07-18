@@ -211,6 +211,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="HtmlHelpers\PagingHelpers.cs" />
     <Compile Include="Migrations\201607110859171_InitialModelAndDatbaseInitialization.cs" />
     <Compile Include="Migrations\201607110859171_InitialModelAndDatbaseInitialization.Designer.cs">
       <DependentUpon>201607110859171_InitialModelAndDatbaseInitialization.cs</DependentUpon>
@@ -228,6 +229,7 @@
     <Compile Include="Models\ContactViewModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\PagingInfoViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>

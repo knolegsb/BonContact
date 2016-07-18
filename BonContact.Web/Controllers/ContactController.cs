@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
@@ -19,53 +20,70 @@ namespace BonContact.Web.Controllers
     {        
         private IContactRepository _repo;
 
+        public int PageSize = 4;
+
         public ContactController(IContactRepository repo)
         {
             this._repo = repo;
-        }        
-
-        public ViewResult Index(string sortOrder, string currentFilter, string searchString, int? page)
-        {
-            ViewBag.CurrentSort = sortOrder;
-            ViewBag.NameSortParam = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
-            ViewBag.DateSortParam = sortOrder == "Date" ? "date_desc" : "Date";
-
-            if (searchString != null)
-            {
-                page = 1;
-            }
-            else
-            {
-                searchString = currentFilter;
-            }
-
-            ViewBag.CurrentFilter = searchString;
-
-            var contacts = _repo.GetAllContacts().Select(c => c)
-                                        .Where(c => string.IsNullOrEmpty(searchString) 
-                                                    || c.FirstName.Contains(searchString) 
-                                                    || c.LastName.Contains(searchString));
-
-            switch (sortOrder)
-            {
-                case "name_desc":
-                    contacts = contacts.OrderByDescending(c => c.LastName);
-                    break;
-                case "Date":
-                    contacts = contacts.OrderBy(c => c.DateAdded);
-                    break;
-                case "date_desc":
-                    contacts = contacts.OrderByDescending(c => c.DateAdded);
-                    break;
-                default:
-                    contacts = contacts.OrderBy(c => c.LastName);
-                    break;
-            }
-
-            int pageSize = 10;
-            int pageNumber = (page ?? 1);
-            return View(contacts.ToPagedList(pageNumber, pageSize));
         }
+
+        public ViewResult Index(int page = 1)
+        {
+            ContactViewModel viewModel = new ContactViewModel()
+            {
+                Contacts = _repo.GetAllContacts().OrderBy(c => c.ID).Skip((page - 1) * PageSize).Take(PageSize),
+                PagingInfo = new PagingInfoViewModel()
+                {
+                    CurrentPage = page,
+                    ItemsPerPage = PageSize,
+                    TotalItems = _repo.GetAllContacts().Count()
+                }
+            };
+            return View(viewModel);
+        }
+
+        //public ViewResult Index(string sortOrder, string currentFilter, string searchString, int? page)
+        //{
+        //    ViewBag.CurrentSort = sortOrder;
+        //    ViewBag.NameSortParam = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+        //    ViewBag.DateSortParam = sortOrder == "Date" ? "date_desc" : "Date";
+
+        //    if (searchString != null)
+        //    {
+        //        page = 1;
+        //    }
+        //    else
+        //    {
+        //        searchString = currentFilter;
+        //    }
+
+        //    ViewBag.CurrentFilter = searchString;
+
+        //    var contacts = _repo.GetAllContacts().Select(c => c)
+        //                                .Where(c => string.IsNullOrEmpty(searchString) 
+        //                                            || c.FirstName.Contains(searchString) 
+        //                                            || c.LastName.Contains(searchString));
+
+        //    switch (sortOrder)
+        //    {
+        //        case "name_desc":
+        //            contacts = contacts.OrderByDescending(c => c.LastName);
+        //            break;
+        //        case "Date":
+        //            contacts = contacts.OrderBy(c => c.DateAdded);
+        //            break;
+        //        case "date_desc":
+        //            contacts = contacts.OrderByDescending(c => c.DateAdded);
+        //            break;
+        //        default:
+        //            contacts = contacts.OrderBy(c => c.LastName);
+        //            break;
+        //    }
+
+        //    int pageSize = 10;
+        //    int pageNumber = (page ?? 1);
+        //    return View(contacts.ToPagedList(pageNumber, pageSize));
+        //}
 
         // GET: Contact/Details/5
         public ActionResult Details(int? id)

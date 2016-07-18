@@ -11,5 +11,7 @@ namespace BonContact.Web.Models
         public IEnumerable<Contact> Contacts { get; set; }
         public IEnumerable<Address> Addresses { get; set; }
         public IEnumerable<File> Files { get; set; }
+
+        public PagingInfoViewModel PagingInfo { get; set; }
     }
 }

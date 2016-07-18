@@ -14,8 +14,8 @@ namespace BonContact.Web.Controllers
         // GET: File
         public ActionResult Index(int id)
         {
-            var fileToRetrive = db.Files.Find(id);
-            return File(fileToRetrive.Content, fileToRetrive.ContentType);
+            var fileToRetrieve = db.Files.Find(id);
+            return File(fileToRetrieve.Content, fileToRetrieve.ContentType);
         }
     }
 }
