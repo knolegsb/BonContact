@@ -6,6 +6,10 @@
 
 @{
     ViewBag.Title = "Index";
+    AjaxOptions ajaxOptions = new AjaxOptions()
+    {
+        UpdateTargetId = "tableBody"
+    };
 }
 
 <h2>Index</h2>
@@ -14,14 +18,15 @@
     @Html.ActionLink("Create New", "Create")
 </p>
 
-@using (Html.BeginForm("Index", "Contact", FormMethod.Get))
+@*@using (Html.BeginForm("Index", "Contact", FormMethod.Get))*@
+@using(Ajax.BeginForm("Index", ajaxOptions))
 {
     <p>
         Find by name : @Html.TextBox("SearchString")
         <input type="submit" value="Search" />
     </p>
 }
-<table class="table">
+<table class="table" id="tableBody">
     <tr>
         <th>
             Image
