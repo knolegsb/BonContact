@@ -17,7 +17,7 @@
 @using (Html.BeginForm("Index", "Contact", FormMethod.Get))
 {
     <p>
-        Find by name : @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
+        Find by name : @Html.TextBox("SearchString")
         <input type="submit" value="Search" />
     </p>
 }
@@ -27,15 +27,12 @@
             Image
         </th>
         <th>
-            @*@Html.ActionLink("First Name", "Index", new { sortOrder = ViewBag.NameSortParam, currentFilter = ViewBag.CurrentFilter })*@
             First Name
         </th>
         <th>
-            @*@Html.ActionLink("Last Name", "Index", new { sortOrder = ViewBag.NameSortParam, currentFilter = ViewBag.CurrentFilter })*@
             Last Name
         </th>
         <th>
-            @*@Html.ActionLink("Date Added", "Index", new { sortOrder = ViewBag.DateSortParam, currentFilter = ViewBag.CurrentFilter })*@
             Date Added
         </th>
         <th>
@@ -79,10 +76,6 @@
 
 </table>
 
-
-@*Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
-
-@Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))*@
 
 <div class="btn-group pull-right">
     @Html.PageLinks(Model.PagingInfo, x => Url.Action("Index", new {page = x}))

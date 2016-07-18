@@ -29,8 +29,8 @@ namespace BonContact.Web.Controllers
 
         public ViewResult Index(string searchString, int page = 1)
         {
-            var contacts = _repo.GetAllContacts().OrderBy(c => c.ID).Skip((page - 1)*PageSize).Take(PageSize)
-                .Where(c => string.IsNullOrEmpty(searchString)
+            var contacts = _repo.GetAllContacts().OrderBy(c => c.ID).Skip((page - 1)*PageSize).Take(PageSize);
+            var searchContacts = _repo.GetAllContacts().Where(c => string.IsNullOrEmpty(searchString)
                             || c.FirstName.Contains(searchString)
                             || c.FirstName.ToLower().Contains(searchString)
                             || c.FirstName.ToUpper().Contains(searchString)
@@ -40,12 +40,12 @@ namespace BonContact.Web.Controllers
 
             ContactViewModel viewModel = new ContactViewModel()
             {
-                Contacts = contacts,
+                Contacts = searchString == null ? contacts : searchContacts,
                 PagingInfo = new PagingInfoViewModel()
                 {
                     CurrentPage = page,
                     ItemsPerPage = PageSize,
-                    TotalItems = searchString == null ? _repo.GetAllContacts().Count() : contacts.Count() 
+                    TotalItems = searchString == null ? _repo.GetAllContacts().Count() : searchContacts.Count() 
                 }
             };
             
