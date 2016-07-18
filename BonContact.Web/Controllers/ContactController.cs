@@ -36,7 +36,10 @@ namespace BonContact.Web.Controllers
                             || c.FirstName.ToUpper().Contains(searchString)
                             || c.LastName.Contains(searchString)
                             || c.LastName.ToLower().Contains(searchString)
-                            || c.LastName.ToUpper().Contains(searchString));
+                            || c.LastName.ToUpper().Contains(searchString)
+                            || c.Interests.Contains(searchString)
+                            || c.Interests.ToLower().Contains(searchString)
+                            || c.Interests.ToUpper().Contains(searchString));
 
             ContactViewModel viewModel = new ContactViewModel()
             {
