@@ -27,18 +27,54 @@ namespace BonContact.Web.Controllers
             this._repo = repo;
         }
 
-        public ViewResult Index(int page = 1)
+        public ViewResult Index(string searchString, int page = 1)
         {
+            //if (searchString != null)
+            //{
+            //    page = 1;
+            //}
+            //else
+            //{
+            //    searchString = currentFilter;
+            //}
+
+            var contacts = _repo.GetAllContacts().OrderBy(c => c.ID).Skip((page - 1)*PageSize).Take(PageSize)
+                .Where(c => string.IsNullOrEmpty(searchString)
+                            || c.FirstName.Contains(searchString)
+                            || c.FirstName.ToLower().Contains(searchString)
+                            || c.FirstName.ToUpper().Contains(searchString)
+                            || c.LastName.Contains(searchString)
+                            || c.LastName.ToLower().Contains(searchString)
+                            || c.LastName.ToUpper().Contains(searchString));
+
             ContactViewModel viewModel = new ContactViewModel()
             {
-                Contacts = _repo.GetAllContacts().OrderBy(c => c.ID).Skip((page - 1) * PageSize).Take(PageSize),
+                //Contacts = _repo.GetAllContacts().OrderBy(c => c.ID).Skip((page - 1) * PageSize).Take(PageSize)
+                //                                .Where(c => string.IsNullOrEmpty(searchString)
+                //                                            || c.FirstName.Contains(searchString)
+                //                                            || c.FirstName.ToLower().Contains(searchString)
+                //                                            || c.FirstName.ToUpper().Contains(searchString)
+                //                                            || c.LastName.Contains(searchString)
+                //                                            || c.LastName.ToLower().Contains(searchString)
+                //                                            || c.LastName.ToUpper().Contains(searchString)),
+                Contacts = contacts,
                 PagingInfo = new PagingInfoViewModel()
                 {
                     CurrentPage = page,
                     ItemsPerPage = PageSize,
-                    TotalItems = _repo.GetAllContacts().Count()
+                    //TotalItems = currentFilter == null ? _repo.GetAllContacts().Count() :
+                    //                                    _repo.GetAllContacts().OrderBy(c => c.ID).Skip((page - 1) * PageSize).Take(PageSize)
+                    //                                        .Where(c => string.IsNullOrEmpty(searchString)
+                    //                                        || c.FirstName.Contains(searchString)
+                    //                                        || c.FirstName.ToLower().Contains(searchString)
+                    //                                        || c.FirstName.ToUpper().Contains(searchString)
+                    //                                        || c.LastName.Contains(searchString)
+                    //                                        || c.LastName.ToLower().Contains(searchString)
+                    //                                        || c.LastName.ToUpper().Contains(searchString)).Count()
+                    TotalItems = searchString == null ? _repo.GetAllContacts().Count() : contacts.Count() 
                 }
             };
+            
             return View(viewModel);
         }
 

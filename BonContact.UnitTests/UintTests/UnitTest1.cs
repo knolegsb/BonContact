@@ -150,7 +150,7 @@ namespace BonContact.UnitTests.UintTests
             Assert.AreEqual("Details", result.ViewName);
             Assert.AreEqual(contact.Address.First().City, "Los Angeles2");
             Assert.AreEqual(contact.ID, 2);
-            Assert.AreEqual(nullResult.Model, null);
+            Assert.AreEqual(nullResult, null);
         }
     }
 }
