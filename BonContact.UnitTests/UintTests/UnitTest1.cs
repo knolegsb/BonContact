@@ -111,5 +111,46 @@ namespace BonContact.UnitTests.UintTests
             // Assert
             Assert.AreEqual(@"<a class=""btn btn-default"" href=""Page1"">1</a>" + @"<a class=""btn btn-default btn-primary selected"" href=""Page2"">2</a>" + @"<a class=""btn btn-default"" href=""Page3"">3</a>", result.ToString());
         }
+
+        [TestMethod]
+        public void Test_For_Details()
+        {
+            // Arrange
+            Mock<IContactRepository> mock = new Mock<IContactRepository>();
+            mock.Setup(m => m.GetContact(2)).Returns(new Contact()
+            {
+                ID = 2,
+                FirstName = "Sean2",
+                LastName = "John2",
+                Interests = "Shopping2",
+                Address = new List<Address>()
+                {
+                    new Address()
+                    {
+                        Line1 = "2011 Wilshire Blvd_2",
+                        Line2 = "",
+                        City = "Los Angeles2",
+                        ZipCode = "90010_2",
+                        State = "California2",
+                        Country = "USA2"
+                    }
+                }
+            });
+
+            ContactController controller = new ContactController(mock.Object);
+
+            // Act
+            var result = controller.Details(2) as ViewResult;
+            var nullResult = controller.Details(null) as ViewResult;
+
+            var contact = (Contact)result.ViewData.Model;
+            //var nullContact = (bool) nullResult.ViewData.Model ;
+            // Assert
+
+            Assert.AreEqual("Details", result.ViewName);
+            Assert.AreEqual(contact.Address.First().City, "Los Angeles2");
+            Assert.AreEqual(contact.ID, 2);
+            Assert.AreEqual(nullResult.Model, null);
+        }
     }
 }

@@ -98,7 +98,7 @@ namespace BonContact.Web.Controllers
                 return HttpNotFound();
             }
             
-            return View(contact);
+            return View("Details", contact);
         }
 
         // GET: Contact/Create
