@@ -2,7 +2,7 @@
 @model BonContact.Web.Models.ContactViewModel
 
 @*@model PagedList.IPagedList<BonContact.Web.Entities.Contact>
-@using PagedList.Mvc;*@
+    @using PagedList.Mvc;*@
 
 @{
     ViewBag.Title = "Index";
@@ -12,77 +12,94 @@
     };
 }
 
-<h2>Index</h2>
+<h2>Contact List</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-primary" })
 </p>
 
 @*@using (Html.BeginForm("Index", "Contact", FormMethod.Get))*@
-@using(Ajax.BeginForm("Index", ajaxOptions))
+@using (Ajax.BeginForm("Index", ajaxOptions))
 {
-    <p>
-        Find by name : @Html.TextBox("SearchString")
-        <input type="submit" value="Search" />
-    </p>
+    <div class="form-group">
+        @Html.Label("Find by name :", new { @class = "control-label" })
+        @Html.TextBox("SearchString", null, new { @class = "form-control" })
+        <input type="submit" value="Search" class="btn btn-primary" />
+    </div>
 }
-<table class="table" id="tableBody">
-    <tr>
-        <th>
-            Image
-        </th>
-        <th>
-            First Name
-        </th>
-        <th>
-            Last Name
-        </th>
-        <th>
-            Date Added
-        </th>
-        <th>
-            Intests
-        </th>
-        <th></th>
-    </tr>
+<table class="table table-bordered table-striped table-hover" id="tableBody">
+    <thead>
+        <tr>
+            <th style="text-align:center;">
+                Image
+            </th>
+            <th style="text-align:center;">
+                First Name
+            </th>
+            <th style="text-align:center;">
+                Last Name
+            </th>
+            <th style="text-align:center;">
+                Date Added
+            </th>
+            <th style="text-align:center;">
+                Intests
+            </th>
+            <th style="text-align:center;">
+                Operations
+            </th>
+        </tr>
+    </thead>
+    @foreach (var item in Model.Contacts)
+    {
+        <tr style="text-align:center;">
+            <td>
+                @if (item.Files.Any(f => f.FileType == BonContact.Web.Entities.FileType.Photo))
+                {
+                    <img class="img-thumbnail" src="~/File?id=@item.Files.First(f => f.FileType == BonContact.Web.Entities.FileType.Photo).FileID" alt="image" height="50" width="50" />
+                }
+                else
+                {
+                    <img src="~/Images/no-thumb.jpg" height="50" with="50" />
+                }
+            </td>
 
-@foreach (var item in Model.Contacts) {
-    <tr>
-        <td>
-            @if (item.Files.Any(f => f.FileType == BonContact.Web.Entities.FileType.Photo))
-            {
-                <img class="img-thumbnail" src="~/File?id=@item.Files.First(f => f.FileType == BonContact.Web.Entities.FileType.Photo).FileID" alt="image" height="50" width="50" />
-            }
-            else
-            {
-                <img src="~/Images/no-thumb.jpg" height="50" with="50" />
-            }
-        </td>
-
-        <td>
-            @Html.DisplayFor(modelItem => item.FirstName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.LastName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DateAdded)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Interests)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.ID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.ID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.ID })
-        </td>
-    </tr>
-}
+            <td style="vertical-align: middle;">
+                @Html.DisplayFor(modelItem => item.FirstName)
+            </td>
+            <td style="vertical-align: middle;">
+                @Html.DisplayFor(modelItem => item.LastName)
+            </td>
+            <td style="vertical-align: middle;">
+                @Html.DisplayFor(modelItem => item.DateAdded)
+            </td>
+            <td style="vertical-align: middle;">
+                @Html.DisplayFor(modelItem => item.Interests)
+            </td>
+            <td style="text-align:center; vertical-align: middle;" width="200">
+                @*@Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+                @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.ID })*@
+                @Html.ActionLink("Edit", "Edit", new { id = item.ID }, new { @class = "btn btn-primary", @style = "padding:10px;" })
+                @Html.ActionLink("Details", "Details", new { id = item.ID }, new { @class = "btn btn-primary", @style = "padding:10px;" })
+                @Html.ActionLink("Delete", "Delete", new { id = item.ID }, new { @class = "btn btn-primary", @style = "padding:10px;" })
+            </td>
+        </tr>
+    }
 
 </table>
 
 
 <div class="btn-group pull-right">
-    @Html.PageLinks(Model.PagingInfo, x => Url.Action("Index", new {page = x}))
+    @Html.PageLinks(Model.PagingInfo, x => Url.Action("Index", new { page = x }))
 </div>
-<br/>
+<br />
+
+@*@section Scripts{
+        <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                $('#tableBody').DataTable();
+            })
+        </script>
+    }*@

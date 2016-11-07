@@ -43,7 +43,7 @@ namespace BonContact.Web.Controllers
 
             ContactViewModel viewModel = new ContactViewModel()
             {
-                Contacts = searchString == null ? contacts : searchContacts,
+                Contacts = String.IsNullOrEmpty(searchString) ? contacts : searchContacts,
                 PagingInfo = new PagingInfoViewModel()
                 {
                     CurrentPage = page,

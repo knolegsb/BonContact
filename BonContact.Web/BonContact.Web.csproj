@@ -242,8 +242,16 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Images\AliciaKeys.jpg" />
+    <Content Include="Images\AngelinaJolie.jpg" />
+    <Content Include="Images\AnnCusack.jpg" />
+    <Content Include="Images\BradPitt.jpg" />
+    <Content Include="Images\GillianAnderson.jpg" />
+    <Content Include="Images\GregoryHeins.jpg" />
+    <Content Include="Images\LadyGaga.jpg" />
     <Content Include="Images\no-thumb.jpg" />
     <Content Include="Images\noPicture.png" />
+    <Content Include="Images\SeanBean.jpg" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
