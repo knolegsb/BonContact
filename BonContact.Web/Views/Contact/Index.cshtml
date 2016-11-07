@@ -14,19 +14,21 @@
 
 <h2>Contact List</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-primary" })
-</p>
-
-@*@using (Html.BeginForm("Index", "Contact", FormMethod.Get))*@
-@using (Ajax.BeginForm("Index", ajaxOptions))
-{
-    <div class="form-group">
-        @Html.Label("Find by name :", new { @class = "control-label" })
-        @Html.TextBox("SearchString", null, new { @class = "form-control" })
-        <input type="submit" value="Search" class="btn btn-primary" />
+<div class="row" style="margin: 20px 0 20px;">
+    <div class="col-md-6 pull-right text-right">
+        @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-primary" })
     </div>
-}
+
+    @*@using (Html.BeginForm("Index", "Contact", FormMethod.Get))*@
+    @using (Ajax.BeginForm("Index", new { @class = "col-md-6" }, ajaxOptions))
+    {
+        <div class="input-group" style="margin-left: 5px;">
+            @Html.Label("Find by name :", new { @class = "input-group-addon" })
+            @Html.TextBox("SearchString", null, new { @class = "form-control" })
+            <input type="submit" value="Search" class="btn btn-primary" />
+        </div>
+    }
+</div>
 <table class="table table-bordered table-striped table-hover" id="tableBody">
     <thead>
         <tr>
