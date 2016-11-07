@@ -29,7 +29,7 @@ namespace BonContact.Web.Controllers
 
         public ViewResult Index(string searchString, int page = 1)
         {
-            var contacts = _repo.GetAllContacts().OrderBy(c => c.ID).Skip((page - 1)*PageSize).Take(PageSize);
+            var contacts = _repo.GetAllContacts().OrderByDescending(c => c.ID).Skip((page - 1)*PageSize).Take(PageSize);
             var searchContacts = _repo.GetAllContacts().Where(c => string.IsNullOrEmpty(searchString)
                             || c.FirstName.Contains(searchString)
                             || c.FirstName.ToLower().Contains(searchString)
@@ -101,7 +101,14 @@ namespace BonContact.Web.Controllers
                             newImage.Content = reader.ReadBytes(upload.ContentLength);
                         }
                         contact.Files = new List<File> { newImage };
-                    }                    
+                    }
+                    //if (upload == null)
+                    //{
+                    //    var newImage = new File
+                    //    {
+                    //        FileName = System.IO.Path.GetFileName()
+                    //    }
+                    //}                    
 
                     if (address != null)
                     {
