@@ -57,13 +57,16 @@
         <div class="form-group">
             @Html.Label("Image", new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                <input type="file" id="image" name="upload" onchange="show(this)" />
+                <input type="file" id="image" name="upload" class="btn btn-default" onchange="show(this)" />
             </div>
         </div>
 
-        <div>
-            <img id="user_img" height="240" width="180" style="border:solid;" />
-        </div>
+        <div id="newImage" class="form-group" style="display: none;">           
+            <span class="control-label col-md-2"><strong><i>New Image Preview</i></strong></span>
+            <div class="col-md-10">                
+                <img id="user_img" height="100" width="75" style="border-radius:5px;" />
+            </div>
+        </div>  
 
         <hr />        
         
@@ -126,8 +129,9 @@
     @Scripts.Render("~/bundles/jqueryval")
     <script>
         function show(input) {
-            console.log(input);
+            //console.log(input);
             if (input.files && input.files[0]) {
+                $("#newImage").css('display', 'inline');
                 var filedr = new FileReader();
                 filedr.onload = function (e) {
                     $('#user_img').attr('src', e.target.result);

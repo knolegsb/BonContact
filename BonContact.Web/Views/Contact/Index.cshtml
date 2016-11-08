@@ -11,7 +11,7 @@
         UpdateTargetId = "tableBody"
     };
 }
-
+<link href="~/Content/modal.css" rel="stylesheet" />
 <h2>Contact List</h2>
 
 <div class="row" style="margin: 20px 0 20px;">
@@ -58,7 +58,20 @@
             <td>
                 @if (item.Files.Any(f => f.FileType == BonContact.Web.Entities.FileType.Photo))
                 {
-                    <img class="img-thumbnail" src="~/File?id=@item.Files.First(f => f.FileType == BonContact.Web.Entities.FileType.Photo).FileID" alt="image" height="50" width="50" />
+                    @*<a href="#myPopup" data-rel="popup" data-position-to="window">*@
+                        <img id="myImg" class="img-thumbnail" src="~/File?id=@item.Files.First(f => f.FileType == BonContact.Web.Entities.FileType.Photo).FileID" alt="image" height="50" width="50" />
+                    @*</a>*@
+
+                    @*<div data-role="popup" id="myPopup">
+                        <p>@item.FirstName &nbsp; @item.LastName</p>
+                        <a href="#pageone" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon--delete ui-btn-icon-notext ui-btn-right">Close</a>
+                        <img  src="~/File?id=@item.Files.First(f => f.FileType == BonContact.Web.Entities.FileType.Photo).FileID" height="800" width="750" />
+                    </div>*@
+                    <div id="myModal" class="modal">
+                        <span class="close" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
+                        <img class="modal-content" id="img01" />
+                        <div id="caption"></div>
+                    </div>
                 }
                 else
                 {
@@ -97,11 +110,42 @@
 </div>
 <br />
 
-@*@section Scripts{
-        <script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
-        <script>
-            $(document).ready(function () {
-                $('#tableBody').DataTable();
-            })
-        </script>
-    }*@
+@section Scripts{
+    <script>
+        //var modal = $('#myModal');
+        //var img = $('#myImg');
+        //var modalImg = $('#img01');
+        //var captionText = $('#caption');
+        //img.onclick = function () {
+        //    modal.style.display = 'block';
+        //    modalImg.src = this.src;
+        //    captionText.innerHTML = this.alt;
+        //}
+
+        //var span = $('.close')[0];
+        //span.onclick = function () {
+        //    modal.style.display = "none";
+        //}
+        // Get the modal
+        var modal = document.getElementById('myModal');
+
+        // Get the image and insert it inside the modal - use its "alt" text as a caption
+        var img = document.getElementById('myImg');
+        var modalImg = document.getElementById("img01");
+        var captionText = document.getElementById("caption");
+        img.onclick = function () {
+            modal.style.display = "block";
+            modalImg.src = this.src;
+            captionText.innerHTML = this.alt;
+        }
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+    </script>
+    
+}
