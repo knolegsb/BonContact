@@ -11,8 +11,9 @@
         UpdateTargetId = "tableBody"
     };
 }
-<link href="~/Content/modal.css" rel="stylesheet" />
-<link href="~/Content/jquery.fancybox.css" rel="stylesheet" />
+
+<link href="~/Content/lightbox.css" rel="stylesheet" />
+
 <h2>Contact List</h2>
 
 <div class="row" style="margin: 20px 0 20px;">
@@ -60,22 +61,28 @@
                 @if (item.Files.Any(f => f.FileType == BonContact.Web.Entities.FileType.Photo))
                 {
                     @*<a href="#myPopup" data-rel="popup" data-position-to="window">*@
-                        @*<img id="myImg" class="img-thumbnail" src="~/File?id=@item.Files.First(f => f.FileType == BonContact.Web.Entities.FileType.Photo).FileID" alt="image" height="50" width="50" />*@
+                    @*<img id="myImg" class="img-thumbnail" src="~/File?id=@item.Files.First(f => f.FileType == BonContact.Web.Entities.FileType.Photo).FileID" alt="image" height="50" width="50" />*@
                     @*</a>*@
 
-                    <a class="myImages" href="~/File?id=@item.Files.First(f => f.FileType == BonContact.Web.Entities.FileType.Photo).FileID">
+                    <a class="myImages" href="#">
                         <img id="myImg" class="img-thumbnail" src="~/File?id=@item.Files.First(f => f.FileType == BonContact.Web.Entities.FileType.Photo).FileID" alt="image" height="50" width="50" />
                     </a>
 
-                    @*<div data-role="popup" id="myPopup">
-                        <p>@item.FirstName &nbsp; @item.LastName</p>
-                        <a href="#pageone" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon--delete ui-btn-icon-notext ui-btn-right">Close</a>
-                        <img  src="~/File?id=@item.Files.First(f => f.FileType == BonContact.Web.Entities.FileType.Photo).FileID" height="800" width="750" />
-                    </div>*@
-                    <div id="myModal" class="modal">
-                        <span class="close" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
-                        <img class="modal-content" id="img01" />
-                        <div id="caption"></div>
+                    <div tabindex="0" class="modal fade" id="myModal" role="dialog">
+                        <div class="modal-dialog modal-sm">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button class="close" type="button" data-dismiss="modal">X</button>
+                                    <h3 class="modal-title">@item.FirstName &nbsp; @item.LastName</h3>
+                                </div>
+                                <div class="modal-body">
+                                    @*<img id="myImg" class="img-thumbnail" src="~/File?id=@item.Files.First(f => f.FileType == BonContact.Web.Entities.FileType.Photo).FileID" alt="image" />*@
+                                </div>
+                                @*<div class="modal-footer">
+                                    <button class="btn btn-default" data-dismiss="modal">Close</button>
+                                </div>*@
+                            </div>
+                        </div>
                     </div>
                 }
                 else
@@ -83,6 +90,8 @@
                     <img src="~/Images/no-thumb.jpg" height="50" with="50" />
                 }
             </td>
+
+            
 
             <td style="vertical-align: middle;">
                 @Html.DisplayFor(modelItem => item.FirstName)
@@ -110,52 +119,35 @@
 </table>
 
 
+
 <div class="btn-group pull-right">
     @Html.PageLinks(Model.PagingInfo, x => Url.Action("Index", new { page = x }))
 </div>
 <br />
 
 @section Scripts{
-<script src="~/Scripts/jquery-1.10.2.min.js"></script>
-
-<script src="~/Scripts/jquery.fancybox.pack.js"></script>
+   
     <script>
-        //var modal = $('#myModal');
-        //var img = $('#myImg');
-        //var modalImg = $('#img01');
-        //var captionText = $('#caption');
-        //img.onclick = function () {
-        //    modal.style.display = 'block';
-        //    modalImg.src = this.src;
-        //    captionText.innerHTML = this.alt;
-        //}
+        $(document).ready(function () {
+            $('.img-thumbnail').click(function () {
+                console.log($(this).attr('src'));
+                var srcHtml = $(this).attr('src');
+                console.log(srcHtml);
+                $('.modal-body').empty();
+                var title = $(this).parent('a').attr("title");
+                $('.modal-title').html(title);
+                var imgHtml = '';
+                imgHtml += '<img id="myImg" class="img-thumbnail" src="' + srcHtml + '" alt="image" width="300"/>';
 
-        //var span = $('.close')[0];
-        //span.onclick = function () {
-        //    modal.style.display = "none";
-        //}
-        // Get the modal
-        //var modal = document.getElementById('myModal');
-
-        //// Get the image and insert it inside the modal - use its "alt" text as a caption
-        //var img = document.getElementById('myImg');
-        //var modalImg = document.getElementById("img01");
-        //var captionText = document.getElementById("caption");
-        //img.onclick = function () {
-        //    modal.style.display = "block";
-        //    modalImg.src = this.src;
-        //    captionText.innerHTML = this.alt;
-        //}
-
-        //// Get the <span> element that closes the modal
-        //var span = document.getElementsByClassName("close")[0];
-
-        //// When the user clicks on <span> (x), close the modal
-        //span.onclick = function () {
-        //    modal.style.display = "none";
-        //}
-
-        $("a.myImages").fancybox();
+                @*<img id="myImg" class="img-thumbnail" src="~/File?id=@item.Files.First(f => f.FileType == BonContact.Web.Entities.FileType.Photo).FileID" alt="image" />*@
+                $('.modal-body').html(imgHtml);
+                //$($(this).parents('div').html()).appendTo('.modal-body');
+                //$($('a.myImages').html()).appendTo('.modal-body');
+                //$(".modal-body img").attr("width", "500").attr("height", "600");
+                //console.log($('a.myImages').html());
+                $('#myModal').modal({ show: true });
+                //console.log($('img#myImg').attr('src'));
+            });
+        });
     </script>
-    
 }
